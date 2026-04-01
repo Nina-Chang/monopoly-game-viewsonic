@@ -8,7 +8,8 @@ const cfg = (typeof window !== 'undefined' && window.gameConfig) ? window.gameCo
 
 const ScoresPage = ({navigateTo, backgroundImage, players, setPlayers,bgmAudio}) => {
     const gameMode=useGameMode()
-    const { modeStrings,modePlayers,modeSounds, modeAssets } = useMemo(() => ({
+    const { modeImages,modeStrings,modePlayers,modeSounds, modeAssets } = useMemo(() => ({
+        modeImages : cfg.images?.[gameMode] || {},
         modeStrings : cfg.strings?.[gameMode] || {},
         modePlayers : cfg.players?.[gameMode] || [],
         modeSounds : cfg.sounds?.[gameMode] || {},
@@ -37,14 +38,28 @@ const ScoresPage = ({navigateTo, backgroundImage, players, setPlayers,bgmAudio})
         audioPlayer.play().catch((e)=>console.log('Audio Failed',e))
     },[])
 
-    const renderWonPlayer=()=>{
-        const wonPlayer=players.find(player=>player.step>=24)
+    const renderWonPlayer = () => {
+        let wonPlayer;
+        if (gameMode === "linear") {
+            wonPlayer = players.find(player => player.step >= 23);
+        } else {
+            wonPlayer = players.find(player => player.step >= 24);
+        }
+
+        // 如果沒有玩家獲勝，則不渲染
+        if (!wonPlayer) return null;
+
+        const winnerImgSrc = modeImages.finchWinner?.[wonPlayer.id - 1] 
+            || `./images/object/Basketball_monopoly_finch_0${wonPlayer.id}.png`;
 
         return (
-            wonPlayer&&
-            <img className={`won-player-${wonPlayer.id}`} src={`./images/object/Basketball_monopoly_finch_0${wonPlayer.id}.png`} alt="Won Player"/>
-        )
-    }
+            <img 
+                className={`won-player-${wonPlayer.id}`} 
+                src={winnerImgSrc} 
+                alt={`Won Player ${wonPlayer.id}`} 
+            />
+        );
+    };
 
     const handleAfterClickingButton=(key)=>{
         const destination=key==="home"?"start":"monopoly"

@@ -18,6 +18,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
     const [cardIndex, setCardIndex] = useState({chest:0,chance:0});
     const [diceNumber, setDiceNumber] = useState(3); // 預設顯示 3 點
     const [isRolling, setIsRolling] = useState(false);
+    const [lastPosition, setLastPosition] = useState({});// 新增 lastPosition 記錄玩家移動前的位置
     const currentPlayer=players.find(p=>p.current===true)
     const isProcessing = useRef(false);
     const [clickingBtn, setClickingBtn] = useState(null);
@@ -98,8 +99,13 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
         })
     },[])
 
-    const handleDiceClick=async(playerCurStep)=>{
+    const handleDiceClick=async(playerCurStep,fromChance=false)=>{
         if (isRolling) return; // 防止連點
+        // 擲骰子前，記錄目前玩家的位置
+        const activePlayer = players.find(p => p.current === true);
+        if (activePlayer) {
+            setLastPosition(prev => ({ ...prev, [activePlayer.id]: activePlayer.step }));
+        }
         setIsRolling(true);
         playSound(modeSounds?.dice || "./sounds/dice.mp3")
         setScaleForDice(0.9);
@@ -126,7 +132,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
         setTimeout(()=>{
             const playerId=players.find(p=>p.current===true).id
             const curStep=playerCurStep===null?null:playerCurStep
-            handleMoveThePlayer(playerId,curStep,finalResult)
+            handleMoveThePlayer(playerId,curStep,finalResult,fromChance)
         },500)
     }
 
@@ -163,8 +169,14 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
             setIsCorrect(prevState => ({ ...prevState, [button]: 0 }));
             // 音效
             playSound(modeSounds?.wrong || "./sounds/wrong.mp3")
-            const playerId=players.find(p=>p.current===true).id
-            handleMoveThePlayer(playerId,null,-100)//答錯回到原點
+            // 答錯退回上一個位置 (使用 lastPosition)
+            const playerId = players.find(p => p.current === true).id;
+            const prevStep = lastPosition[playerId] || 1;
+            const diff = prevStep - currentPlayer.step;
+            
+            // 執行退回，並設 skipQuestion 為 true
+            handleMoveThePlayer(playerId, null, diff, true);
+
             setTimeout(()=>{
                 setCurrentProblemIndex(currentProblemIndex+1)
                 // 卡牌消失
@@ -259,7 +271,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
     };
 
     // 判斷當前第幾步的操作
-    const handleAfterStepActions=(step)=>{
+    const handleAfterStepActions=(step, skipQuestion = false)=>{
         if (step >= 24) {
             setSectionVisible({ dice: false, question: true, chest: false, chance: false });
         } 
@@ -278,13 +290,18 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
             setSectionVisible({ dice: true, question: false, chest: false, chance: false });
         }
         else {
-            // 只有一般格子才顯示問題
-            setSectionVisible({ dice: false, question: true, chest: false, chance: false });
+            // 如果 skipQuestion 為 true，則不顯示題目視窗直接跳下一位
+            if (skipQuestion) {
+                handleNextPlayerTurn();
+                setSectionVisible({ dice: true, question: false, chest: false, chance: false });
+            } else {
+                setSectionVisible({ dice: false, question: true, chest: false, chance: false });
+            }
         }
     }
 
     // 移動玩家到下一步
-    const handleMoveThePlayer = (playerId,playerCurStep, nextStepOrTotal) => {
+    const handleMoveThePlayer = (playerId,playerCurStep, nextStepOrTotal, skipQuestion = false) => {
         let finalStep;
         const currentPlayer = players.find(p => p.id === playerId);
         if (!currentPlayer) return;
@@ -321,7 +338,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
         });
 
         setTimeout(() => {
-            handleAfterStepActions(finalStep)
+            handleAfterStepActions(finalStep, skipQuestion)
             setIsRolling(false);
             setDiceNumber(3); 
         }, 1000);
@@ -371,12 +388,12 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                 setSectionVisible({dice:false,question:false,chest:false,chance:false})
                 if(cardId===1){// 後退一步
                     const playerId=players.find(p=>p.current===true).id
-                    handleMoveThePlayer(playerId,curStep,-1)
+                    handleMoveThePlayer(playerId,curStep,-1,true)
                     reject()
                 }
                 else if(cardId===2){// 回到原點
                     const playerId=players.find(p=>p.current===true).id
-                    handleMoveThePlayer(playerId,curStep,-100)
+                    handleMoveThePlayer(playerId,curStep,-100,true)
                 }
                 else if(cardId===3){// 暫停一回
                     setPlayers(prevPlayers => 
@@ -443,7 +460,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                         setSectionVisible({dice:true,question:false,chest:false,chance:false})
                     }
                     else{
-                        handleAfterStepActions(currentNewStep)
+                        handleAfterStepActions(currentNewStep,true)
                     }
                     reject()
                 }
@@ -462,15 +479,15 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
             setSectionVisible({dice:false,question:false,chest:false,chance:false})
             if(cardId===1){// 再骰一次
                 setSectionVisible({dice:true,question:false,chest:false,chance:false})
-                handleDiceClick(12)
+                handleDiceClick(12,true)
             }
             else if(cardId===2){// 前進一步
                 const playerId=players.find(p=>p.current===true).id
-                handleMoveThePlayer(playerId,12,1)
+                handleMoveThePlayer(playerId,12,1,true)
             }
             else if(cardId===3){// 前進二步
                 const playerId=players.find(p=>p.current===true).id
-                handleMoveThePlayer(playerId,12,2)
+                handleMoveThePlayer(playerId,12,2,true)
             }
             else{// 和前面最近的玩家同一格
                 setPlayers(prevPlayers => {
@@ -526,7 +543,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                     setSectionVisible({dice:true,question:false,chest:false,chance:false})
                 }
                 else{
-                    handleAfterStepActions(currentNewStep)
+                    handleAfterStepActions(currentNewStep,true)
                 }
             }
         },1000)
