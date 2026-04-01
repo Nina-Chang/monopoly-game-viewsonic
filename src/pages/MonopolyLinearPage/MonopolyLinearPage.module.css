@@ -1,0 +1,370 @@
+/* --- 遊戲頁面 --- */
+.sectionHidden{
+  display: none;
+}
+
+.dice-section{
+  position: absolute;
+  top: 40%;
+  left: 62%;
+  text-align: center;
+}
+
+.dice-face {
+  position: absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  width: 180px;
+  height: 180px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.1), 5px 5px 15px rgba(0,0,0,0.2);
+}
+
+.dice-dots {
+  display: grid;
+  grid-template-areas:
+      "a . b"
+      "c d e"
+      "f . g";
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 120px;
+  height: 120px;
+  gap: 15px;
+}
+
+.dot {
+  width: 30px;
+  height: 30px;
+  background-color: #000;
+  border-radius: 50%;
+  align-self: center;
+  justify-self: center;
+}
+
+/* 具體點位的邏輯 */
+.dice-value-1 .dot { grid-area: d; } /* 中間 */
+
+.dice-value-2 .dot:nth-child(1) { grid-area: a; }
+.dice-value-2 .dot:nth-child(2) { grid-area: g; }
+
+.dice-value-3 .dot:nth-child(1) { grid-area: a; }
+.dice-value-3 .dot:nth-child(2) { grid-area: d; }
+.dice-value-3 .dot:nth-child(3) { grid-area: g; }
+
+.dice-value-4 .dot:nth-child(1) { grid-area: a; }
+.dice-value-4 .dot:nth-child(2) { grid-area: b; }
+.dice-value-4 .dot:nth-child(3) { grid-area: f; }
+.dice-value-4 .dot:nth-child(4) { grid-area: g; }
+
+.dice-value-5 .dot:nth-child(1) { grid-area: a; }
+.dice-value-5 .dot:nth-child(2) { grid-area: b; }
+.dice-value-5 .dot:nth-child(3) { grid-area: d; }
+.dice-value-5 .dot:nth-child(4) { grid-area: f; }
+.dice-value-5 .dot:nth-child(5) { grid-area: g; }
+
+.dice-value-6 .dot:nth-child(1) { grid-area: a; }
+.dice-value-6 .dot:nth-child(2) { grid-area: b; }
+.dice-value-6 .dot:nth-child(3) { grid-area: c; }
+.dice-value-6 .dot:nth-child(4) { grid-area: e; }
+.dice-value-6 .dot:nth-child(5) { grid-area: f; }
+.dice-value-6 .dot:nth-child(6) { grid-area: g; }
+
+.question-section{
+  position: absolute;
+  top:29%;
+  left: 48%;
+  text-align: center;
+}
+.question-text{
+  font-size: 34px;
+  font-weight: 700;
+  position: absolute;
+  top:4px;
+  left:50%;
+  transform: translateX(-50%);
+}
+.question-content-text{
+  font-size: clamp(18px, 2vw, 48px);
+  font-weight: 500;
+  position: absolute;
+  top:60px;
+  left:50%;
+  transform: translateX(-50%);
+  width: 550px;
+  font-weight: 800;
+}
+
+.answer-section{
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.answer-section button{
+  margin-bottom: 10px;
+}
+.answer-text{
+  width: 500px;
+  font-size: clamp(18px, 2vw, 48px);
+  font-weight: 700;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  will-change: transform;/*  防止縮放時文字變模糊或跳動 */
+}
+.answer-image-button{
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transform: scale(1);
+
+  /* 💡 加入固定寬高，防止 Layout 重新計算 */
+  width: 700px;   
+  height: 60px;    
+
+  /* 💡 強制開啟硬體加速，防止第一次動畫閃爍 */
+  backface-visibility: hidden;
+}
+
+.answer-image-button:not(:disabled):hover {
+    transform: scale(1.1) !important;
+}
+.answer-image-button:disabled {
+    color:#000;
+}
+
+@keyframes clickPop {
+  0% { transform: scale(1.1); }   
+  50% { transform: scale(0.9); }  
+  100% { transform: scale(1); }  
+}
+
+.clicking {
+  animation: clickPop 0.25s ease-out; 
+  pointer-events: none; /* 動畫時不接受再次點擊，防止連續點擊 Bug */
+}
+
+.card-section{
+  position: absolute;
+  top:30%;
+  left: 55%;
+}
+
+.step-1{
+  position: absolute;
+  top:76%;
+  left: 30%;
+}
+.player-pieces-container{
+  position: absolute;
+  top:-230%;
+  left:24%;
+}
+.player-pieces-container-with-img-8{
+  position: absolute;
+  top:-80%;
+  left:-20%;
+}
+.player-pieces-container-with-img-11{
+  position: absolute;
+  top:-50%;
+  left:4%;
+}
+.player-pieces.is-current::before {
+  content: '▼';
+  position: absolute;
+  top: -30px; 
+  left: 50%;
+  transform: translateX(-50%);
+  color: #E63B3B;
+  font-size: 35px; 
+  z-index: 99;
+  animation: arrowBounce 1s infinite alternate;
+}
+@keyframes arrowBounce {
+  from { transform: translateX(-50%) translateY(0); }
+  to { transform: translateX(-50%) translateY(-10px); }
+}
+.player-pieces.piece-1{
+  position: absolute;
+  top:65px;
+  left:-15px;
+}
+.player-pieces.piece-2{
+  position: absolute;
+  top:65px;
+  left:45px;
+}
+.player-pieces.piece-3{
+  position: absolute;
+  top:115px;
+  left:-45px;
+}
+.player-pieces.piece-4{
+  position: absolute;
+  top:115px;
+  left:15px;
+}
+.player-pieces.piece-5{
+  position: absolute;
+  top:115px;
+  left:70px;
+}
+.step-2{
+  position: absolute;
+  top:76%;
+  left: 18%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-3{
+  position: absolute;
+  top:82%;
+  left: 8.5%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-4{
+  position: absolute;
+  top:68%;
+  left: 2.1%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-5{
+  position: absolute;
+  top:51%;
+  left: 5.9%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-6{
+  position: absolute;
+  top:49%;
+  left: 16.1%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-7{
+  position: absolute;
+  top:55%;
+  left: 25.8%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-8{
+  position: absolute;
+  top:63%;
+  left: 37%;
+}
+.step-9{
+  position: absolute;
+  top:72%;
+  left: 43.6%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-10{
+  position: absolute;
+  top:78%;
+  left: 53.6%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-11{
+  position: absolute;
+  top:80%;
+  left: 65%;
+}
+.step-12{
+  position: absolute;
+  top:85%;
+  left: 73.9%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-13{
+  position: absolute;
+  top:76%;
+  left: 83%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-14{
+  position: absolute;
+  top:60%;
+  left: 88.5%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-15{
+  position: absolute;
+  top:42%;
+  left: 89.6%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-16{
+  position: absolute;
+  top:24%;
+  left: 85.9%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-17{
+  position: absolute;
+  top:12.6%;
+  left: 77.6%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-18{
+  position: absolute;
+  top:10.3%;
+  left: 67%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-19{
+  position: absolute;
+  top:13%;
+  left: 56.9%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-20{
+  position: absolute;
+  top:18%;
+  left: 46.7%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-21{
+  position: absolute;
+  top:22.7%;
+  left: 36.4%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-22{
+  position: absolute;
+  top:23.7%;
+  left: 25.9%;
+  font-size: 36px;
+  font-weight: 700;
+}
+.step-23{
+  position: absolute;
+  top:22.2%;
+  left: 15.9%;
+  font-size: 36px;
+  font-weight: 700;
+}
