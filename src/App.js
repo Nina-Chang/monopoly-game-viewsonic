@@ -36,39 +36,6 @@ function App() {
     transform: `scale(${scale})`,
   };
 
-  // document.querySelectorAll('.question-content-text').forEach(el => {
-  //   const len = el.innerText.length;
-
-  //   if (len > 56) {
-  //     el.style.fontSize = '15px';
-  //   } else if (len >35) {
-  //     el.style.fontSize = '20px';
-  //   } else if (len >22) {
-  //     el.style.fontSize = '24px';
-  //   } else if (len >12) {
-  //     el.style.fontSize = '28px';
-  //   } else {
-  //     el.style.fontSize = '32px';
-  //   }
-  // });
-
-  // document.querySelectorAll('.answer-text').forEach(el => {
-  //   const len = el.innerText.length;
-
-  //   if (len > 40) {
-  //     el.style.fontSize = '16px';
-  //   } else if (len >25) {
-  //     el.style.fontSize = '20px';
-  //   } else if (len >18) {
-  //     el.style.fontSize = '24px';
-  //   } else if (len >10) {
-  //     el.style.fontSize = '28px';
-  //   } else {
-  //     el.style.fontSize = '32px';
-  //   }
-  // });
-
-
   const handleStartGame=()=>{
     if(audioRef.current && audioRef.current.paused){
       audioRef.current.volume=0.1

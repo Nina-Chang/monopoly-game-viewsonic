@@ -69,10 +69,9 @@ const ScoresPage = ({navigateTo, backgroundImage, players, setPlayers,bgmAudio})
 
     return (
         <div className="page-container" style={pageStyle}>
-            <div style={modeStrings.scoresTitle.style}>
+            <div style={modeStrings.scoresTitle.style} className="congratulation-text">
                 {modeStrings.scoresTitle.text}
             </div>
-            {/* <span className="congratulation-text">You won!</span> */}
             {renderWonPlayer()}
             <div className="button-container">
                 <button className="image-button" 
@@ -90,9 +89,24 @@ const ScoresPage = ({navigateTo, backgroundImage, players, setPlayers,bgmAudio})
                     <img src={"./images/object/Basketball_monopoly_again_button.png"} alt="Reset Scores"/>
                 </button>
             </div>
-            {pageAssets.map((asset, index) => (
-                <div key={asset.id || index} style={asset.style}>
-                {asset.text}
+            {pageAssets.map((asset) => (
+                <div key={asset.RawId || asset.id} style={asset.style}>
+                    {asset.Type === 'Text' ? 
+                    (
+                        asset.displayContent
+                    ) 
+                    : (
+                        <img 
+                            src={asset.displayContent} 
+                            alt="game-asset" 
+                            style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'contain',
+                                display: 'block' 
+                            }} 
+                        />
+                    )}
                 </div>
             ))}
         </div>

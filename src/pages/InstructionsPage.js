@@ -46,9 +46,24 @@ const InstructionsPage = ({ navigateTo, backgroundImage }) => {
           <img src={modeImages?.btnNext || 'images/object/Basketball_monopoly_next_button.png'} alt="Continue" />
         </button>
       </div>
-      {pageAssets.map((asset, index) => (
-        <div key={asset.id || index} style={asset.style}>
-          {asset.text}
+      {pageAssets.map((asset) => (
+        <div key={asset.RawId || asset.id} style={asset.style}>
+            {asset.Type === 'Text' ? 
+            (
+                asset.displayContent
+            ) 
+            : (
+                <img 
+                    src={asset.displayContent} 
+                    alt="game-asset" 
+                    style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'contain',
+                        display: 'block' 
+                    }} 
+                />
+            )}
         </div>
       ))}
     </div>
