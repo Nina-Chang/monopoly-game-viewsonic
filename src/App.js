@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useRef, useLayoutEffect,useEffect,useMemo } from 'react';
+import { useState, useRef, useLayoutEffect,useEffect } from 'react';
 import StartPage from './pages/StartPage';
 import InstructionsPage from './pages/InstructionsPage';
 import MonopolyRoundPage from './pages/MonopolyRoundPage/MonopolyRoundPage';
@@ -8,22 +8,19 @@ import ScoresPage from './pages/ScoresPage';
 import useGameMode from "./hooks/useGameMode"
 
 const cfg = (typeof window !== 'undefined' && window.gameConfig) ? window.gameConfig : {};
+const modeImages = cfg?.images || {};
+const modePlayers = cfg?.players || [];
+const modeSounds = cfg?.sounds || {};
 
 function App() {
   const gameMode=useGameMode()
-  const { modeImages, modePlayers, modeSounds } = useMemo(() => ({
-    modeImages: cfg.images?.[gameMode] || {},
-    modePlayers: cfg.players?.[gameMode] || [],
-    modeSounds: cfg.sounds?.[gameMode] || {},
-  }), [gameMode]);
-
   const backgroundImages = {
-    start: modeImages?.bgStart || './images/background/Basketball_monopoly_01_FHD.png',
-    instructions: modeImages?.bgInstructions || './images/background/Basketball_monopoly_02_FHD.png',
-    monopoly: modeImages?.bgMonopoly || './images/background/Basketball_monopoly_03_FHD.png',
-    scores: modeImages?.bgScores || './images/background/Basketball_monopoly_04_FHD.png',
+    start: modeImages.bgStart || './images/background/Basketball_monopoly_linear_01_FHD.png',
+    instructions: modeImages.bgInstructions || './images/background/Basketball_monopoly_linear_02_FHD.png',
+    // monopoly:modeImages.bgMonopoly || './images/background/Basketball_monopoly_linear_03_FHD.png',
+    monopoly:gameMode==="linear"?modeImages.bgMonopoly:'./images/background/Basketball_monopoly_round_03_FHD.png' || './images/background/Basketball_monopoly_linear_03_FHD.png',
+    scores: modeImages.bgScores || './images/background/Basketball_monopoly_linear_04_FHD.png',
   };
-
   const [page, setPage] = useState('start');
   const [players, setPlayers] = useState(modePlayers || []);
   const [scale, setScale] = useState(1);

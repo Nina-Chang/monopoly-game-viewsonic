@@ -1,17 +1,13 @@
-import { useEffect,useMemo } from 'react';
+import { useEffect } from 'react';
 import useClickAnimation from '../hooks/useClickAnimation';
 import usePageAssets from '../hooks/usePageAssets';
 import useSendGameMessage from '../hooks/useSendGameMessage';
-import useGameMode from '../hooks/useGameMode';
 
 const cfg = (typeof window !== 'undefined' && window.gameConfig) ? window.gameConfig : {};
+const modeImages = cfg?.images || {};
+const modeAssets = cfg?.assets || [];
 
 const InstructionsPage = ({ navigateTo, backgroundImage }) => {
-  const gameMode=useGameMode()
-  const { modeImages, modeAssets } = useMemo(() => ({
-    modeImages : cfg.images?.[gameMode] || {},
-    modeAssets : cfg.assets?.[gameMode] || [],
-  }), [gameMode]);
   const { buttonScale,setScale, handleClickAnimation }=useClickAnimation(()=>navigateTo('monopoly'))
   const { sendMessage }=useSendGameMessage()
   const pageAssets = usePageAssets(modeAssets, 2);

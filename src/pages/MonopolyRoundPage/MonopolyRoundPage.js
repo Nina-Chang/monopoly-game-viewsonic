@@ -4,11 +4,10 @@ import useSendGameMessage from "../../hooks/useSendGameMessage"
 import usePageAssets from "../../hooks/usePageAssets"
 
 const cfg = (typeof window !== 'undefined' && window.gameConfig) ? window.gameConfig : {};
-const gameMode = 'round';
-const modeImages = cfg.images?.[gameMode] || {};
-const modeSounds = cfg.sounds?.[gameMode] || {};
-const modeQuestions = cfg.questions?.[gameMode]?.[0]?.questions || [];
-const modeAssets = cfg.assets?.[gameMode] || [];
+const modeImages = cfg?.images || {};
+const modeSounds = cfg?.sounds || {};
+const modeQuestions = cfg?.questions?.[0]?.questions || [];
+const modeAssets = cfg?.assets || [];
 
 const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setCurrentProblemIndex,players,setPlayers,bgmAudio}) => {
     const [scaleForDice, setScaleForDice] = useState(1)

@@ -1,17 +1,13 @@
 import useClickAnimation from "../hooks/useClickAnimation"
 import useSendGameMessage from "../hooks/useSendGameMessage"
 import usePageAssets from "../hooks/usePageAssets"
-import useGameMode from "../hooks/useGameMode"
-import { useEffect,useMemo } from "react";
+import { useEffect } from "react";
 
 const cfg = (typeof window !== 'undefined' && window.gameConfig) ? window.gameConfig : {};
+const modeStrings = cfg?.strings || {};
+const modeAssets = cfg?.assets || [];
 
 const StartPage = ({ onStartGame, backgroundImage }) => {
-  const gameMode=useGameMode()
-  const { modeStrings, modeAssets } = useMemo(() => ({
-    modeStrings : cfg.strings?.[gameMode] || {},
-    modeAssets : cfg.assets?.[gameMode] || [],
-  }), [gameMode]);
   const { buttonScale,setScale, handleClickAnimation }=useClickAnimation(onStartGame)
   const { sendMessage }=useSendGameMessage()
   const pageAssets = usePageAssets(modeAssets, 1);
