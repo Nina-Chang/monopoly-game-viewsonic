@@ -17,8 +17,8 @@ function App() {
   const backgroundImages = {
     start: modeImages.bgStart || './images/background/Basketball_monopoly_linear_01_FHD.png',
     instructions: modeImages.bgInstructions || './images/background/Basketball_monopoly_linear_02_FHD.png',
-    monopoly:modeImages.bgMonopoly || './images/background/Basketball_monopoly_linear_03_FHD.png',
-    // monopoly:gameMode==="linear"?modeImages.bgMonopoly:'./images/background/Basketball_monopoly_round_03_FHD.png' || './images/background/Basketball_monopoly_linear_03_FHD.png',
+    // monopoly:modeImages.bgMonopoly || './images/background/Basketball_monopoly_linear_03_FHD.png',
+    monopoly:gameMode==="linear"?modeImages.bgMonopoly:'./images/background/Basketball_monopoly_round_03_FHD.png' || './images/background/Basketball_monopoly_linear_03_FHD.png',
     scores: modeImages.bgScores || './images/background/Basketball_monopoly_linear_04_FHD.png',
   };
   const [page, setPage] = useState('start');

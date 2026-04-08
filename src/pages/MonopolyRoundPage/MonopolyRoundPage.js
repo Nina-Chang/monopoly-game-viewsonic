@@ -157,7 +157,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                     navigateTo("scores");
                     return;
                 }
-                setCurrentProblemIndex(currentProblemIndex+1)
+                setCurrentProblemIndex((currentProblemIndex + 1) % modeQuestions.length);
                 // 卡牌消失
                 setSectionVisible({dice:true,question:false,chest:false,chance:false})
                 reset()
@@ -177,7 +177,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
             handleMoveThePlayer(playerId, null, diff, true);
 
             setTimeout(()=>{
-                setCurrentProblemIndex(currentProblemIndex+1)
+                setCurrentProblemIndex((currentProblemIndex + 1) % modeQuestions.length);
                 // 卡牌消失
                 setSectionVisible({dice:true,question:false,chest:false,chance:false})
                 reset()
