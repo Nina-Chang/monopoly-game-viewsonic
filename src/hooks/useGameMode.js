@@ -8,13 +8,13 @@ import { useMemo } from 'react';
 const cfg = (typeof window !== 'undefined' && window.gameConfig) ? window.gameConfig : {};
 
 const useGameMode = (defaultMode = 'round') => {
-  const gameMode = useMemo(() => {
-    if (typeof window === 'undefined') return defaultMode;
+  // const gameMode = useMemo(() => {
+  //   if (typeof window === 'undefined') return defaultMode;
     
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('gameMode') || defaultMode;
-  }, []); 
-  // const gameMode=cfg.settings?.gameMode || 'round';
+  //   const urlParams = new URLSearchParams(window.location.search);
+  //   return urlParams.get('gameMode') || defaultMode;
+  // }, []); 
+  const gameMode=cfg.settings?.gameMode || 'round';
 
   return gameMode;
 };
