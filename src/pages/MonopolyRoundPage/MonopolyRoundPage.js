@@ -242,15 +242,18 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
         if (stepNum === 1) {
             containerClass = MonopolyRoundPageStyle['player-pieces-container-1'];
         } else if (stepNum === 5 || stepNum === 12 || stepNum === 19) {
-            // 動態取得如 player-pieces-container-with-img-5
             containerClass = MonopolyRoundPageStyle[`player-pieces-container-with-img-${stepNum}`];
         } else {
             containerClass = MonopolyRoundPageStyle['player-pieces-container-with-questions'];
         }
 
         return (
-            <div className={containerClass}>
-                {playersOnThisStep.map((p) => (
+        <div className={containerClass}>
+            {playersOnThisStep.map((p) => {
+                const playerImageKey = `finchPlayer${p.id}`;
+                const playerImgSrc = modeImages?.[playerImageKey] || `./images/object/Basketball_monopoly_piece_0${p.id}.png`;
+
+                return (
                     <div 
                         key={p.id} 
                         className={`
@@ -260,13 +263,14 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                         `}
                     >
                         <img 
-                            src={modeImages?.finchPlayers?.[p.id - 1] || `./images/object/Basketball_monopoly_piece_0${p.id}.png`} 
+                            src={playerImgSrc} 
                             alt={`player-${p.id}`} 
                         />
                     </div>
-                ))}
-            </div>
-        );
+                );
+            })}
+        </div>
+    );
     };
 
     // 判斷當前第幾步的操作

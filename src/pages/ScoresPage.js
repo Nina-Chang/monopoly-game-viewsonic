@@ -48,7 +48,8 @@ const ScoresPage = ({navigateTo, backgroundImage, players, setPlayers,bgmAudio})
         // 如果沒有玩家獲勝，則不渲染
         if (!wonPlayer) return null;
 
-        const winnerImgSrc = modeImages.finchWinner?.[wonPlayer.id - 1] 
+        const winnerImgKey = `finchWinner${wonPlayer.id}`;
+        const winnerImgSrc = modeImages?.[winnerImgKey] 
             || `./images/object/Basketball_monopoly_finch_0${wonPlayer.id}.png`;
 
         return (

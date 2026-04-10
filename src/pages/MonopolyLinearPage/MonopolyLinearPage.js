@@ -254,21 +254,26 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
 
         return (
             <div className={containerClassName}>
-                {playersOnThisStep.map((p) => (
-                    <div 
-                        key={p.id} 
-                        className={`
-                            ${MonopolyLinearPageStyle['player-pieces']} 
-                            ${MonopolyLinearPageStyle[`piece-${p.positionInStep}`]} 
-                            ${p.current ? MonopolyLinearPageStyle['is-current'] : ''}
-                        `}
-                    >
-                        <img 
-                            src={modeImages?.finchPlayers?.[p.id - 1] || `./images/object/Basketball_monopoly_piece_0${p.id}.png`} 
-                            alt={`player-${p.id}`} 
-                        />
-                    </div>
-                ))}
+                {playersOnThisStep.map((p) => {
+                    const playerImgKey = `finchPlayer${p.id}`;
+                    const playerImgSrc = modeImages?.[playerImgKey] || `./images/object/Basketball_monopoly_piece_0${p.id}.png`;
+
+                    return (
+                        <div 
+                            key={p.id} 
+                            className={`
+                                ${MonopolyLinearPageStyle['player-pieces']} 
+                                ${MonopolyLinearPageStyle[`piece-${p.positionInStep}`]} 
+                                ${p.current ? MonopolyLinearPageStyle['is-current'] : ''}
+                            `}
+                        >
+                            <img 
+                                src={playerImgSrc} 
+                                alt={`player-${p.id}`} 
+                            />
+                        </div>
+                    );
+                })}
             </div>
         );
     };
