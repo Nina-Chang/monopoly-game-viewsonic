@@ -96,6 +96,9 @@ function App() {
         {/* 場景2 */}
         {page === 'instructions' && (<InstructionsPage navigateTo={navigateTo} onStartGame={handleStartGame} backgroundImage={backgroundImages.instructions}/>)}
         {/* 場景3 */}
+        {/* 場景5-問題和骰子 */}
+        {/* 場景6-命運卡(Chest) */}
+        {/* 場景7-機會卡(Chance) */}
         {(page === 'monopoly'&&gameMode==="round") && (<MonopolyRoundPage navigateTo={navigateTo} backgroundImage={backgroundImages.monopoly} currentProblemIndex={currentProblemIndex} setCurrentProblemIndex={setCurrentProblemIndex} players={players} setPlayers={setPlayers} bgmAudio={audioRef.current}/>)}
         {(page === 'monopoly'&&gameMode==="linear") && (<MonopolyLinearPage navigateTo={navigateTo} backgroundImage={backgroundImages.monopoly} currentProblemIndex={currentProblemIndex} setCurrentProblemIndex={setCurrentProblemIndex} players={players} setPlayers={setPlayers} bgmAudio={audioRef.current}/>)}
         {/* 場景4 */}

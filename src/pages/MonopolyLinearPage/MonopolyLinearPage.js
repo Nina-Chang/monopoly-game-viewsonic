@@ -23,7 +23,10 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
     const isProcessing = useRef(false);
     const [clickingBtn, setClickingBtn] = useState(null);
     const { sendMessage }=useSendGameMessage()
-    const pageAssets = usePageAssets(modeAssets, 3);
+    const pageAssetsInStage3 = usePageAssets(modeAssets, 3);
+    const pageAssetsInStage5 = usePageAssets(modeAssets, 5);
+    const pageAssetsInStage6 = usePageAssets(modeAssets, 6);
+    const pageAssetsInStage7 = usePageAssets(modeAssets, 7);
 
     const pageStyle = { 
         backgroundImage: `url(${backgroundImage})`,
@@ -643,7 +646,68 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
                     </div>
                 ))}
             </div>
-            {pageAssets.map((asset) => (
+            {/* 額外資源 */}
+            {pageAssetsInStage3.map((asset) => (
+                <div key={asset.RawId || asset.id} style={asset.style}>
+                    {asset.Type === 'Text' ? 
+                    (
+                        asset.displayContent
+                    ) 
+                    : (
+                        <img 
+                            src={asset.displayContent} 
+                            alt="game-asset" 
+                            style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'contain',
+                                display: 'block' 
+                            }} 
+                        />
+                    )}
+                </div>
+            ))}
+            {(sectionVisible.dice||sectionVisible.question) && pageAssetsInStage5.map((asset) => (
+                <div key={asset.RawId || asset.id} style={asset.style}>
+                    {asset.Type === 'Text' ? 
+                    (
+                        asset.displayContent
+                    ) 
+                    : (
+                        <img 
+                            src={asset.displayContent} 
+                            alt="game-asset" 
+                            style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'contain',
+                                display: 'block' 
+                            }} 
+                        />
+                    )}
+                </div>
+            ))}
+            {sectionVisible.chest && pageAssetsInStage6.map((asset) => (
+                <div key={asset.RawId || asset.id} style={asset.style}>
+                    {asset.Type === 'Text' ? 
+                    (
+                        asset.displayContent
+                    ) 
+                    : (
+                        <img 
+                            src={asset.displayContent} 
+                            alt="game-asset" 
+                            style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'contain',
+                                display: 'block' 
+                            }} 
+                        />
+                    )}
+                </div>
+            ))}
+            {sectionVisible.chance && pageAssetsInStage7.map((asset) => (
                 <div key={asset.RawId || asset.id} style={asset.style}>
                     {asset.Type === 'Text' ? 
                     (
