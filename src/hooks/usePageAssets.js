@@ -23,13 +23,14 @@ const usePageAssets = (modeAssets = [], sceneId = 1) => {
         const textStyle = isText ? {
           display: 'flex',
           alignItems: 'center',
-          justifyContent: asset.Align === 'Center' ? 'center' : (asset.Align === 'Right' ? 'flex-end' : 'flex-start'),
+          justifyContent: asset.Align?.toLowerCase() === 'center' ? 'center' : (asset.Align?.toLowerCase() === 'right' ? 'flex-end' : 'flex-start'),
           fontFamily: asset.FontFamily,
           fontSize: `${asset.FontSize}px`,
           color: asset.Color,
           textAlign: asset.Align?.toLowerCase(),
           fontWeight: asset.Weight?.toLowerCase(),
-          fontStyle: asset.fontStyle,
+          fontStyle: asset.FontStyle,
+          textDecoration:asset.TextDecoration,
         } : {};
 
         return {
