@@ -178,7 +178,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
                 }
                 setCurrentProblemIndex((currentProblemIndex + 1) % modeQuestions.length);
                 // 卡牌消失
-                sendMessage({ sceneId: 5});
+                sendMessage({ sceneId: 3});
                 setSectionVisible({dice:true,question:false,chest:false,chance:false})
                 reset()
             },1000)
@@ -201,7 +201,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
             setTimeout(()=>{
                 setCurrentProblemIndex((currentProblemIndex + 1) % modeQuestions.length);
                 // 卡牌消失
-                sendMessage({ sceneId: 5});
+                sendMessage({ sceneId: 3});
                 setSectionVisible({dice:true,question:false,chest:false,chance:false})
                 reset()
             },1000)
@@ -306,15 +306,17 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
         else if(step === 1){
             // 換下一位玩家
             handleNextPlayerTurn()
-            sendMessage({ sceneId: 5});
+            sendMessage({ sceneId: 3});
             setSectionVisible({ dice: true, question: false, chest: false, chance: false });
         }
         else {
             sendMessage({ sceneId: 5});
             if (skipQuestion) {
                 handleNextPlayerTurn();
+                sendMessage({ sceneId: 3});
                 setSectionVisible({ dice: true, question: false, chest: false, chance: false });
             } else {
+                sendMessage({ sceneId: 5});
                 setSectionVisible({ dice: false, question: true, chest: false, chance: false });
             }
         }
@@ -421,7 +423,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
                         prevPlayers.map(p => 
                             p.current === true ? {...p, pauseRound: 1} : p)
                     )
-                    sendMessage({ sceneId: 5});
+                    sendMessage({ sceneId: 3});
                     setSectionVisible({dice:true,question:false,chest:false,chance:false})
                 }
                 else{// 和最近的玩家換位置
@@ -478,7 +480,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
                     if(currentNewStep===null){
                         // 換下一位玩家
                         handleNextPlayerTurn()
-                        sendMessage({ sceneId: 5});
+                        sendMessage({ sceneId: 3});
                         setSectionVisible({dice:true,question:false,chest:false,chance:false})
                     }
                     else{
@@ -501,7 +503,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
         setTimeout(()=>{
             setSectionVisible({dice:false,question:false,chest:false,chance:false})
             if(cardId===1){// 再骰一次
-                sendMessage({ sceneId: 5});
+                sendMessage({ sceneId: 3});
                 setSectionVisible({dice:true,question:false,chest:false,chance:false})
                 isCardEffectProcessing.current = false;
                 handleDiceClick(11,true)
@@ -568,7 +570,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
                 if(currentNewStep===null){
                     // 換下一位玩家
                     handleNextPlayerTurn()
-                    sendMessage({ sceneId: 5});
+                    sendMessage({ sceneId: 3});
                     setSectionVisible({dice:true,question:false,chest:false,chance:false})
                 }
                 else{
@@ -658,7 +660,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
                 ))}
             </div>
             {/* 額外資源 */}
-            {pageAssetsInStage3.map((asset) => (
+            {sectionVisible.dice && pageAssetsInStage3.map((asset) => (
                 <div key={asset.RawId || asset.id} style={asset.style}>
                     {asset.Type === 'Text' ? 
                     (
@@ -678,7 +680,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
                     )}
                 </div>
             ))}
-            {(sectionVisible.dice||sectionVisible.question) && pageAssetsInStage5.map((asset) => (
+            {(sectionVisible.question) && pageAssetsInStage5.map((asset) => (
                 <div key={asset.RawId || asset.id} style={asset.style}>
                     {asset.Type === 'Text' ? 
                     (

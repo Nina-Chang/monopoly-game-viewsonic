@@ -19,7 +19,7 @@ function App() {
     instructions: modeImages.bgInstructions || './images/background/Basketball_monopoly_linear_02_FHD.png',
     monopoly:modeImages.bgMonopoly || './images/background/Basketball_monopoly_linear_03_FHD.png',
     // 在local執行需要分別linear和round的背景圖片
-    // monopoly:gameMode==="linear"?modeImages.bgMonopoly:'./images/background/Basketball_monopoly_round_03_FHD.png' || './images/background/Basketball_monopoly_linear_03_FHD.png',
+    // monopoly:gameMode==="round"?modeImages.bgMonopoly:'./images/background/Basketball_monopoly_linear_03_FHD.png',
     scores: modeImages.bgScores || './images/background/Basketball_monopoly_linear_04_FHD.png',
   };
   const [page, setPage] = useState('start');

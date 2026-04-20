@@ -1,10 +1,7 @@
 import { useState } from 'react';
 const cfg = (typeof window !== 'undefined' && window.gameConfig) ? window.gameConfig : {};
 
-// 取得目前的遊戲模式，若沒設定則預設為 matching
-const gameMode = cfg.settings?.gameMode || 'matching';
-
-const modeSounds = cfg.sounds?.[gameMode] || {};
+const modeSounds = cfg.sounds || {};
 
 const useClickAnimation = (onComplete,haveSound=true, delay = 300) => {
   const [buttonScale, setButtonScale] = useState({});
