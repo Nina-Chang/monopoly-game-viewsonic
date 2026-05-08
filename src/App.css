@@ -39,6 +39,15 @@ body, html {
   cursor: pointer;
 }
 
+.logo-gray{
+  width: 598px;
+  height: 205px;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%,20%) scale(0.35);
+}
+
 /* --- 起始頁面 --- */
 .start-page-title {
   position: absolute;

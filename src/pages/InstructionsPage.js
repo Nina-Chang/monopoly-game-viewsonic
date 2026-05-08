@@ -42,6 +42,13 @@ const InstructionsPage = ({ navigateTo, backgroundImage }) => {
           <img src={modeImages?.btnNext || 'images/object/Basketball_monopoly_next_button.png'} alt="Continue" />
         </button>
       </div>
+      {
+        cfg.isSubscribe===0
+        &&
+        <div className='logo-gray'>
+          <img src="./images/object/logo-gray.png" alt="logo" ></img>
+        </div>
+      }
       {pageAssets.map((asset) => (
         <div key={asset.RawId || asset.id} style={asset.style}>
             {asset.Type === 'Text' ? 

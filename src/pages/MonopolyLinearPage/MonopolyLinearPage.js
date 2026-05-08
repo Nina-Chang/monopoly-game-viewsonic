@@ -659,6 +659,14 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
                     </div>
                 ))}
             </div>
+            {/* logo */}
+            {
+                cfg.isSubscribe===0
+                &&
+                <div className='logo-gray'>
+                <img src="./images/object/logo-gray.png" alt="logo" ></img>
+                </div>
+            }
             {/* 額外資源 */}
             {sectionVisible.dice && pageAssetsInStage3.map((asset) => (
                 <div key={asset.RawId || asset.id} style={asset.style}>

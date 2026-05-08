@@ -36,6 +36,13 @@ const StartPage = ({ onStartGame, backgroundImage }) => {
         <img src={"./images/object/Basketball_monopoly_start_button.png"} alt="start button"/>
         <span className="start-button-text">Start</span>
       </button>
+      {
+        cfg.isSubscribe===0
+        &&
+        <div className='logo-gray'>
+          <img src="./images/object/logo-gray.png" alt="logo" ></img>
+        </div>
+      }
       {pageAssets.map((asset) => (
         <div key={asset.RawId || asset.id} style={asset.style}>
             {asset.Type === 'Text' ? 
