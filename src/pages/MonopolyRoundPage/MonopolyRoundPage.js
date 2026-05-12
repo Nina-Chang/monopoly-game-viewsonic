@@ -660,7 +660,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
             </div>
             {/* logo */}
             {
-                cfg.settings.isSubscribe===0
+                cfg.settings.isSubscribe===false
                 &&
                 <div className='logo-gray'>
                 <img src="./images/object/logo-gray.png" alt="logo" ></img>
