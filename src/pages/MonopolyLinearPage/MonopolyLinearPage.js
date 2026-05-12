@@ -70,6 +70,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
 
     useEffect(()=>{
         if (!currentPlayer) return;
+        setIsRolling(true)
         if (currentPlayer.current===true && currentPlayer.pauseRound > 0) {
             // 扣除暫停回合，並直接切換到下一位
             const timer = setTimeout(() => {
@@ -92,6 +93,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
             return () => clearTimeout(timer); // 清除 timer 避免記憶體洩漏
             
         }
+        setIsRolling(false)
     },[currentPlayer?.id])
 
     const playSound=useCallback((soundPath)=>{
@@ -661,7 +663,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
             </div>
             {/* logo */}
             {
-                cfg.isSubscribe===0
+                cfg.settings.isSubscribe===0
                 &&
                 <div className='logo-gray'>
                 <img src="./images/object/logo-gray.png" alt="logo" ></img>

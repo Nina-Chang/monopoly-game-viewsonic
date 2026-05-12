@@ -69,6 +69,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
 
     useEffect(()=>{
         if (!currentPlayer) return;
+        setIsRolling(true)
         if (currentPlayer.current===true && currentPlayer.pauseRound > 0) {
             // 扣除暫停回合，並直接切換到下一位
             const timer = setTimeout(() => {
@@ -91,6 +92,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
             return () => clearTimeout(timer); // 清除 timer 避免記憶體洩漏
             
         }
+        setIsRolling(false)
     },[currentPlayer?.id])
 
     const playSound=useCallback((soundPath)=>{
@@ -583,7 +585,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
 
             {/* 骰子區域 */}
             <div className={`${MonopolyRoundPageStyle["dice-section"]} ${sectionVisible.dice === false ? MonopolyRoundPageStyle.sectionHidden : ''}`}
-                onMouseEnter={() => { setScaleForDice(1.1) }}
+                onMouseEnter={() => { setScaleForDice(1.1)}}
                 onMouseLeave={() => { setScaleForDice(1) }}
                 onClick={() => { handleDiceClick(null) }}
                 style={{ transform: `scale(${scaleForDice})` }}>
@@ -658,7 +660,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
             </div>
             {/* logo */}
             {
-                cfg.isSubscribe===0
+                cfg.settings.isSubscribe===0
                 &&
                 <div className='logo-gray'>
                 <img src="./images/object/logo-gray.png" alt="logo" ></img>
