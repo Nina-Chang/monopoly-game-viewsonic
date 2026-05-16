@@ -35,6 +35,7 @@
             gameMode: "round", // linear, round
             // 顯示Logo:0=>顯示，1=>隱藏
             isSubscribe:false,
+            lap:2
           },
           // 文字字串（可換語系）
           strings: {
@@ -52,11 +53,11 @@
           },
 
           players:[
-            { id: 1, name: 'Player 1', current: true,pauseRound:0,step:1,positionInStep:1 },
-            { id: 2, name: 'Player 2', current: false,pauseRound:0,step:1,positionInStep:2 },
-            { id: 3, name: 'Player 3', current: false,pauseRound:0,step:1,positionInStep:3 },
-            { id: 4, name: 'Player 4', current: false,pauseRound:0,step:1,positionInStep:4 },
-            { id: 5, name: 'Player 5', current: false,pauseRound:0,step:1,positionInStep:5 },
+            { id: 1, name: 'Player 1', current: true,pauseRound:0,step:1,positionInStep:1,currentLap:1 },
+            { id: 2, name: 'Player 2', current: false,pauseRound:0,step:1,positionInStep:2,currentLap:1 },
+            { id: 3, name: 'Player 3', current: false,pauseRound:0,step:1,positionInStep:3,currentLap:1 },
+            { id: 4, name: 'Player 4', current: false,pauseRound:0,step:1,positionInStep:4,currentLap:1 },
+            { id: 5, name: 'Player 5', current: false,pauseRound:0,step:1,positionInStep:5,currentLap:1 },
           ],
 
           // 圖片資源(依元件實際使用列出）
@@ -290,7 +291,6 @@
           ],
 
           assets: [
-            
           ],
         }
     </script>

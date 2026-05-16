@@ -157,10 +157,12 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
             // 音效
             playSound(modeSounds?.correct || "./sounds/correct.mp3")
             setTimeout(()=>{
-                if (currentPlayer && currentPlayer.step >= 24) {
-                    setCurrentProblemIndex(0);
-                    navigateTo("scores");
-                    return;
+                if (currentPlayer && currentPlayer.step >= 24) {// 到終點
+                    if(currentPlayer.currentLap===cfg.settings.lap){
+                        setCurrentProblemIndex(0);
+                        navigateTo("scores");
+                        return;
+                    }
                 }
                 setCurrentProblemIndex((currentProblemIndex + 1) % modeQuestions.length);
                 // 卡牌消失
@@ -290,10 +292,13 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
             handleOpenChest(step).then(() => {
                 // 換下一位玩家
                 handleNextPlayerTurn()
-            }).catch(()=>{})
+            })
+            .catch(()=>{})
+            .finally(()=>{setCardIndex({chest:0,chance:0})})
         } 
         else if (step === 12) {
             handleOpenChance()
+            .finally(()=>{setCardIndex({chest:0,chance:0})})
         } 
         else if(step === 1){
             // 換下一位玩家
@@ -317,8 +322,9 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
 
     // 移動玩家到下一步
     const handleMoveThePlayer = (playerId,playerCurStep, nextStepOrTotal, skipQuestion = false) => {
-        let finalStep;
+        let finalStep
         const currentPlayer = players.find(p => p.id === playerId);
+        let finalLap=currentPlayer.currentLap;
         if (!currentPlayer) return;
 
         if (Math.abs(nextStepOrTotal) > 30) {
@@ -328,7 +334,22 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
             finalStep = curStep + nextStepOrTotal;
         }
 
-        if (finalStep >= 24) finalStep = 24;
+        if(currentPlayer.currentLap===cfg.settings.lap){
+            if(finalStep >= 24){
+                finalStep=24;
+                finalLap=currentPlayer.currentLap
+            }
+        }   
+        else{
+            if(finalStep > 24){
+                finalStep=finalStep-24;
+                finalLap=++currentPlayer.currentLap
+            }
+            else if(finalStep === 24){
+                finalStep=24;
+                finalLap=currentPlayer.currentLap
+            }
+        }
         if (finalStep <= 1) finalStep = 1;
 
         // 更新玩家位置
@@ -347,7 +368,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
             //  更新玩家狀態
             return prevPlayers.map(p => 
                 p.id === playerId 
-                    ? { ...p, step: finalStep, positionInStep: targetPosition } 
+                    ? { ...p, step: finalStep, positionInStep: targetPosition,currentLap:finalLap } 
                     : p
             );
         });
@@ -461,11 +482,11 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                             }
                             if (p.id === currentPlayer.id) {
                                 // 當前玩家拿到目標的位置
-                                return { ...p, step: closestPlayer.step,positionInStep:targetPosition };
+                                return { ...p, step: closestPlayer.step,positionInStep:targetPosition,currentLap:closestPlayer.currentLap };
                             }
                             if (p.id === closestPlayer.id) {
                                 // 目標玩家拿到當前玩家的位置
-                                return { ...p, step: currentPlayer.step,positionInStep:currentPlayer.positionInStep };
+                                return { ...p, step: currentPlayer.step,positionInStep:currentPlayer.positionInStep,currentLap:currentPlayer.currentLap };
                             }
                             return p;
                         });
@@ -489,85 +510,87 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
     }
 
     const handleOpenChance=()=>{// 打開機會卡
-        let currentNewStep;
-        const cardId=getRandomCard("chance");
-        setCardIndex(prev=>({...prev,chance:cardId}))
-        sendMessage({ sceneId:7});
-        setSectionVisible({dice:false,question:false,chest:false,chance:true})
-        setTimeout(()=>{
-            setSectionVisible({dice:false,question:false,chest:false,chance:false})
-            if(cardId===1){// 再骰一次
-                sendMessage({ sceneId: 3});
-                setSectionVisible({dice:true,question:false,chest:false,chance:false})
-                handleDiceClick(12,true)
-            }
-            else if(cardId===2){// 前進一步
-                const playerId=players.find(p=>p.current===true).id
-                handleMoveThePlayer(playerId,12,1,true)
-            }
-            else if(cardId===3){// 前進二步
-                const playerId=players.find(p=>p.current===true).id
-                handleMoveThePlayer(playerId,12,2,true)
-            }
-            else{// 和前面最近的玩家同一格
-                setPlayers(prevPlayers => {
-                    // 找到當前玩家
-                    const currentPlayer = prevPlayers.find(p => p.current);
-                    if (!currentPlayer) return prevPlayers;
-
-                    // 尋找最近的玩家 (排除自己)
-                    let closestPlayer = null;
-                    let minDistance = Infinity;
-
-                    prevPlayers.forEach(p => {
-                        if (p.id !== currentPlayer.id && p.step > currentPlayer.step) {
-                            const distance = Math.abs(p.step - currentPlayer.step);
-                            
-                            // 邏輯：找到距離最小的人
-                            if (distance < minDistance) {
-                                minDistance = distance;
-                                closestPlayer = p;
-                                currentNewStep= p.step;
-                            }
-                        }
-                    });
-
-                    // 如果找不到其他人（例如只有一個玩家），就原地不動
-                    if (!closestPlayer) {
-                        currentNewStep=null
-                        return prevPlayers
-                    }
-
-                    // 更新當前玩家的位置
-                    return prevPlayers.map(p => {
-                        const playersOnThisStep = prevPlayers.filter(p => p.step === closestPlayer.step && p.id !== currentPlayer.id);
-                        //  把這些玩家佔用的 positionInStep 全部放進一個 Set (效能更好，查詢快)
-                        const occupiedPositions = new Set(playersOnThisStep.map(p => p.positionInStep));
-                        
-                        //  從 1 開始找，第一個不在 Set 裡的數字就是我們要的最小空位
-                        let targetPosition = 1;
-                        while (occupiedPositions.has(targetPosition)) {
-                            targetPosition++;
-                        }
-                        if (p.id === currentPlayer.id) {
-                            // 將自己的 step 設為跟最近的人一樣
-                            return { ...p, step: closestPlayer.step,positionInStep:targetPosition };
-                        }
-                        return p;
-                    });
-                });
-                // 根據換到的位置判斷之後的操作
-                if(currentNewStep===null){
-                    // 換下一位玩家
-                    handleNextPlayerTurn()
+        return new Promise(()=>{
+            let currentNewStep;
+            const cardId=getRandomCard("chance");
+            setCardIndex(prev=>({...prev,chance:cardId}))
+            sendMessage({ sceneId:7});
+            setSectionVisible({dice:false,question:false,chest:false,chance:true})
+            setTimeout(()=>{
+                setSectionVisible({dice:false,question:false,chest:false,chance:false})
+                if(cardId===1){// 再骰一次
                     sendMessage({ sceneId: 3});
                     setSectionVisible({dice:true,question:false,chest:false,chance:false})
+                    handleDiceClick(12,true)
                 }
-                else{
-                    handleAfterStepActions(currentNewStep,true)
+                else if(cardId===2){// 前進一步
+                    const playerId=players.find(p=>p.current===true).id
+                    handleMoveThePlayer(playerId,12,1,true)
                 }
-            }
-        },1000)
+                else if(cardId===3){// 前進二步
+                    const playerId=players.find(p=>p.current===true).id
+                    handleMoveThePlayer(playerId,12,2,true)
+                }
+                else{// 和前面最近的玩家同一格
+                    setPlayers(prevPlayers => {
+                        // 找到當前玩家
+                        const currentPlayer = prevPlayers.find(p => p.current);
+                        if (!currentPlayer) return prevPlayers;
+    
+                        // 尋找最近的玩家 (排除自己)
+                        let closestPlayer = null;
+                        let minDistance = Infinity;
+    
+                        prevPlayers.forEach(p => {
+                            if (p.id !== currentPlayer.id && p.step > currentPlayer.step) {
+                                const distance = Math.abs(p.step - currentPlayer.step);
+                                
+                                // 邏輯：找到距離最小的人
+                                if (distance < minDistance) {
+                                    minDistance = distance;
+                                    closestPlayer = p;
+                                    currentNewStep= p.step;
+                                }
+                            }
+                        });
+    
+                        // 如果找不到其他人（例如只有一個玩家），就原地不動
+                        if (!closestPlayer) {
+                            currentNewStep=null
+                            return prevPlayers
+                        }
+    
+                        // 更新當前玩家的位置
+                        return prevPlayers.map(p => {
+                            const playersOnThisStep = prevPlayers.filter(p => p.step === closestPlayer.step && p.id !== currentPlayer.id);
+                            //  把這些玩家佔用的 positionInStep 全部放進一個 Set (效能更好，查詢快)
+                            const occupiedPositions = new Set(playersOnThisStep.map(p => p.positionInStep));
+                            
+                            //  從 1 開始找，第一個不在 Set 裡的數字就是我們要的最小空位
+                            let targetPosition = 1;
+                            while (occupiedPositions.has(targetPosition)) {
+                                targetPosition++;
+                            }
+                            if (p.id === currentPlayer.id) {
+                                // 將自己的 step 設為跟最近的人一樣
+                                return { ...p, step: closestPlayer.step,positionInStep:targetPosition,currentLap:closestPlayer.currentLap };
+                            }
+                            return p;
+                        });
+                    });
+                    // 根據換到的位置判斷之後的操作
+                    if(currentNewStep===null){
+                        // 換下一位玩家
+                        handleNextPlayerTurn()
+                        sendMessage({ sceneId: 3});
+                        setSectionVisible({dice:true,question:false,chest:false,chance:false})
+                    }
+                    else{
+                        handleAfterStepActions(currentNewStep,true)
+                    }
+                }
+            },1000)
+        })
     }
 
 
