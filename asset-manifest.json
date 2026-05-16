@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/monopoly-game-viewsonic/static/css/main.849fea87.css",
-    "main.js": "/monopoly-game-viewsonic/static/js/main.9de55780.js",
+    "main.js": "/monopoly-game-viewsonic/static/js/main.3e3d7aa9.js",
     "static/js/453.d30c5f94.chunk.js": "/monopoly-game-viewsonic/static/js/453.d30c5f94.chunk.js",
     "index.html": "/monopoly-game-viewsonic/index.html",
     "main.849fea87.css.map": "/monopoly-game-viewsonic/static/css/main.849fea87.css.map",
-    "main.9de55780.js.map": "/monopoly-game-viewsonic/static/js/main.9de55780.js.map",
+    "main.3e3d7aa9.js.map": "/monopoly-game-viewsonic/static/js/main.3e3d7aa9.js.map",
     "453.d30c5f94.chunk.js.map": "/monopoly-game-viewsonic/static/js/453.d30c5f94.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.849fea87.css",
-    "static/js/main.9de55780.js"
+    "static/js/main.3e3d7aa9.js"
   ]
 }
