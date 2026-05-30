@@ -12,7 +12,7 @@ const modeAssets = cfg?.assets || [];
 const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setCurrentProblemIndex,players,setPlayers,bgmAudio}) => {
     const [scaleForDice, setScaleForDice] = useState(1)
     const initialButtonState={A:-1,B:-1,C:-1} // 0:false 1:true -1:not yet to choose
-    const [isCorrect, setIsCorrect] = useState(initialButtonState) // 0:false 1:true -1:not yet to choose
+    const [isCorrect, setIsCorrect] = useState(initialButtonState) // 0:false 1:true -1:not yet to choose 
     const [sectionVisible, setSectionVisible] = useState({dice:true,question:false,chest:false,chance:false})
     const [cardIndex, setCardIndex] = useState({chest:0,chance:0});
     const [diceNumber, setDiceNumber] = useState(3); // 預設顯示 3 點
@@ -20,7 +20,9 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
     const [lastPosition, setLastPosition] = useState({});// 新增 lastPosition 記錄玩家移動前的位置
     const currentPlayer=players.find(p=>p.current===true)
     const isProcessing = useRef(false);
-    const [clickingBtn, setClickingBtn] = useState(null);
+    const [clickingBtn, setClickingBtn] = useState(null);// 記錄正在點擊的按鈕（'A'、'B' 或 'C'）
+    const chestTimer=useRef(null)
+    const chanceTimer=useRef(null)
     const { sendMessage }=useSendGameMessage()
     const pageAssetsInStage3 = usePageAssets(modeAssets, 3);
     const pageAssetsInStage5 = usePageAssets(modeAssets, 5);
@@ -65,6 +67,14 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
             bgmAudio.volume=0.1
             bgmAudio.play().catch((error)=>{console.log("Audio failed",error)});
         }
+        return()=>{
+            if(chestTimer.current){
+                clearTimeout(chestTimer.current)
+            }
+            if(chanceTimer.current){
+                clearTimeout(chanceTimer.current)
+            }
+        }
     },[])
 
     useEffect(()=>{
@@ -84,7 +94,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                         if (p.id === nextId) {
                             return { ...p, current: true };
                         }
-                        return p;
+                        return { ...p, current: false };
                     });
                 });
             }, 500); // 延遲 0.5 秒再跳轉，讓玩家看清楚發生什麼事
@@ -168,6 +178,8 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                 // 卡牌消失
                 sendMessage({ sceneId: 3});
                 setSectionVisible({dice:true,question:false,chest:false,chance:false})
+                // 換下一位玩家
+                handleNextPlayerTurn()
                 reset()
             },1000)
         }
@@ -190,7 +202,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                 sendMessage({ sceneId: 3});
                 setSectionVisible({dice:true,question:false,chest:false,chance:false})
                 reset()
-            },1000)
+            },1200)
         }
     }
 
@@ -210,33 +222,35 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
         );
     });
 
-    const handleNextPlayerTurn=()=>{
+    const handleNextPlayerTurn = () => {
         setPlayers(prevPlayers => {
-            const currentId = currentPlayer.id;
-            const nextId = players.length===1?1:(currentId % prevPlayers.length) + 1; // 循環到下一位玩家
-            return (
-                prevPlayers.map(p =>
-                    {
-                        if(currentId===nextId)// 只有一位玩家
-                            return {...p,current:true}
-                        if(p.id===currentId)
-                            return {...p,current:false}
-                        else if(p.id===nextId)
-                            return {...p,current:true}
-                        else
-                            return p
-                    }
-                )
-            );
+            // 完全從最新的 prevPlayers 中尋找當前啟動的玩家索引
+            const currentIndex = prevPlayers.findIndex(p => p.current === true);
+            
+            // 防錯：如果找不到當前玩家，不做任何事
+            if (currentIndex === -1) return prevPlayers;
+
+            // 計算下一位玩家的陣列索引（支援單人或多人，自動循環）
+            const nextIndex = (currentIndex + 1) % prevPlayers.length;
+            
+            // 取得下一位玩家的真正 ID
+            const nextPlayerId = prevPlayers[nextIndex].id;
+
+            // 更新狀態
+            return prevPlayers.map(p => {
+                if (p.id === nextPlayerId) {
+                    return { ...p, current: true };
+                } else {
+                    return { ...p, current: false };
+                }
+            });
         });
-    }
+    };
 
     const reset=()=>{
-        setIsCorrect(initialButtonState);
+        setIsCorrect(initialButtonState);// 選擇題所有按鈕狀態重置
         isProcessing.current=false
-        setClickingBtn(null)
-        // 換下一位玩家
-        handleNextPlayerTurn()
+        setClickingBtn(null)// 正在點擊的按鈕狀態重置
     }
 
     // 渲染站在某一步的玩家棋子
@@ -415,13 +429,20 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
     }
 
     const handleOpenChest=(curStep)=>{// 打開命運卡
+        if (chestTimer.current) {
+            return Promise.reject("寶箱動畫進行中，阻擋重複觸發");
+        }
+        // 立刻上鎖：先把門關上，防止極短時間內的連點
+        chestTimer.current = true;
         return new Promise((resolve,reject)=>{
             let currentNewStep;
             const cardId=getRandomCard("chest");
             setCardIndex(prev=>({...prev,chest:cardId}))
             sendMessage({ sceneId: 6});
             setSectionVisible({dice:false,question:false,chest:true,chance:false})
-            setTimeout(()=>{
+            chestTimer.current=setTimeout(()=>{
+                // 執行完畢後，將 ref 清空，釋放鎖定狀態
+                chestTimer.current = null;
                 setSectionVisible({dice:false,question:false,chest:false,chance:false})
                 if(cardId===1){// 後退一步
                     const playerId=players.find(p=>p.current===true).id
@@ -431,6 +452,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                 else if(cardId===2){// 回到原點
                     const playerId=players.find(p=>p.current===true).id
                     handleMoveThePlayer(playerId,curStep,-100,true)
+                    reject()
                 }
                 else if(cardId===3){// 暫停一回
                     setPlayers(prevPlayers => 
@@ -439,6 +461,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                     )
                     sendMessage({ sceneId: 3});
                     setSectionVisible({dice:true,question:false,chest:false,chance:false})
+                    resolve()
                 }
                 else{// 和最近的玩家換位置
                     setPlayers(prevPlayers => {
@@ -467,7 +490,6 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                             currentNewStep=null
                             return prevPlayers
                         }
-                        
     
                         // 執行交換 (回傳新的陣列)
                         return prevPlayers.map(p => {
@@ -503,20 +525,25 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                     }
                     reject()
                 }
-                resolve()
             },1000)
-
         })
     }
 
     const handleOpenChance=()=>{// 打開機會卡
+        if (chanceTimer.current) {
+            return Promise.reject("機會卡動畫進行中，阻擋重複觸發");
+        }
+        // 立刻上鎖：先把門關上，防止極短時間內的連點
+        chanceTimer.current = true;
         return new Promise(()=>{
             let currentNewStep;
             const cardId=getRandomCard("chance");
             setCardIndex(prev=>({...prev,chance:cardId}))
             sendMessage({ sceneId:7});
             setSectionVisible({dice:false,question:false,chest:false,chance:true})
-            setTimeout(()=>{
+            chanceTimer.current=setTimeout(()=>{
+                // 執行完畢後，將 ref 清空，釋放鎖定狀態
+                chanceTimer.current = null;
                 setSectionVisible({dice:false,question:false,chest:false,chance:false})
                 if(cardId===1){// 再骰一次
                     sendMessage({ sceneId: 3});
