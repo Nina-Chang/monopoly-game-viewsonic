@@ -6,7 +6,7 @@ import useSendGameMessage from '../hooks/useSendGameMessage';
 const cfg = (typeof window !== 'undefined' && window.gameConfig) ? window.gameConfig : {};
 const modeImages = cfg?.images || {};
 const modeAssets = cfg?.assets || [];
-const modeThemeColor = cfg?.themeForegroundColor || "";
+const modeThemeColor = cfg?.settings.themeForegroundColor || "";
 
 const InstructionsPage = ({ navigateTo, backgroundImage }) => {
   const { buttonScale,setScale, handleClickAnimation }=useClickAnimation(()=>navigateTo('monopoly'))

@@ -6,7 +6,7 @@ import { useEffect } from "react";
 const cfg = (typeof window !== 'undefined' && window.gameConfig) ? window.gameConfig : {};
 const modeStrings = cfg?.strings || {};
 const modeAssets = cfg?.assets || [];
-const modeThemeColor = cfg?.themeForegroundColor || "";
+const modeThemeColor = cfg?.settings.themeForegroundColor || "";
 
 const StartPage = ({ onStartGame, backgroundImage }) => {
   const { buttonScale,setScale, handleClickAnimation }=useClickAnimation(onStartGame)

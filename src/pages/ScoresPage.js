@@ -11,7 +11,7 @@ const modeStrings = cfg?.strings || {};
 const modePlayers = cfg?.players || [];
 const modeSounds = cfg?.sounds || {};
 const modeAssets = cfg?.assets || [];
-const modeThemeColor = cfg?.themeForegroundColor || "";
+const modeThemeColor = cfg?.settings.themeForegroundColor || "";
 
 const ScoresPage = ({navigateTo, backgroundImage, players, setPlayers,bgmAudio}) => {
     const gameMode=useGameMode()

@@ -8,7 +8,7 @@ const modeImages = cfg?.images || {};
 const modeSounds = cfg?.sounds || {};
 const modeQuestions = cfg?.questions?.[0]?.questions || [];
 const modeAssets = cfg?.assets || [];
-const modeThemeColor = cfg?.themeForegroundColor || "";
+const modeThemeColor = cfg?.settings.themeForegroundColor || "";
 
 const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setCurrentProblemIndex,players,setPlayers,bgmAudio}) => {
     const [scaleForDice, setScaleForDice] = useState(1)
