@@ -8,6 +8,7 @@ const modeImages = cfg?.images || {};
 const modeSounds = cfg?.sounds || {};
 const modeQuestions = cfg?.questions?.[0]?.questions || [];
 const modeAssets = cfg?.assets || [];
+const modeThemeColor = cfg?.themeForegroundColor || "";
 
 const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,setCurrentProblemIndex,players,setPlayers,bgmAudio}) => {
     const [scaleForDice, setScaleForDice] = useState(1)
@@ -655,13 +656,14 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
 
             {/* 問題區域 */}
             <div className={`${MonopolyLinearPageStyle["question-section"]} ${sectionVisible.question === false ? MonopolyLinearPageStyle.sectionHidden : ''}`}>
-                <span className={MonopolyLinearPageStyle['question-text']}>Question</span>
-                <span className={MonopolyLinearPageStyle['question-content-text']} style={{ fontSize: getQuestionFontSize(modeQuestions?.[currentProblemIndex]?.question) }}>{modeQuestions?.[currentProblemIndex]?.question || "Default Question"}</span>
+                <span className={MonopolyLinearPageStyle['question-text']} style={{color:`${modeThemeColor}`}}>Question</span>
+                <span className={MonopolyLinearPageStyle['question-content-text']} style={{ fontSize: getQuestionFontSize(modeQuestions?.[currentProblemIndex]?.question),color:`${modeThemeColor}` }}>{modeQuestions?.[currentProblemIndex]?.question || "Default Question"}</span>
                 <img src="./images/object/Basketball_monopoly_question_frame.png" alt="" />
                 
                 <div className={MonopolyLinearPageStyle["answer-section"]}>
                     <button className={`${MonopolyLinearPageStyle["answer-image-button"]} ${clickingBtn === 'A' ? MonopolyLinearPageStyle.clicking : ''}`}
                         disabled={isProcessing.current} 
+                        style={{color:`${modeThemeColor}`}}
                         onClick={() => { handleButtonClick('A', modeQuestions[currentProblemIndex]?.options[0]) }}>
                         <div className={MonopolyLinearPageStyle["answer-text"]} style={{ fontSize: getAnswerFontSize(modeQuestions[currentProblemIndex]?.options[0]) }}>{modeQuestions[currentProblemIndex]?.options[0] || `A`}</div>
                         <AnswerBackground status={isCorrect.A} />
@@ -669,6 +671,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
                     
                     <button className={`${MonopolyLinearPageStyle["answer-image-button"]} ${clickingBtn === 'B' ? MonopolyLinearPageStyle.clicking : ''}`}
                         disabled={isProcessing.current} 
+                        style={{color:`${modeThemeColor}`}}
                         onClick={() => handleButtonClick('B', `${modeQuestions[currentProblemIndex]?.options[1]}`)}>
                         <div className={MonopolyLinearPageStyle["answer-text"]} style={{ fontSize: getAnswerFontSize(modeQuestions[currentProblemIndex]?.options[1]) }}>{modeQuestions[currentProblemIndex]?.options[1] || `B`}</div>
                         <AnswerBackground status={isCorrect.B} />
@@ -676,6 +679,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
                     
                     <button className={`${MonopolyLinearPageStyle["answer-image-button"]} ${clickingBtn === 'C' ? MonopolyLinearPageStyle.clicking : ''}`}
                         disabled={isProcessing.current} 
+                        style={{color:`${modeThemeColor}`}}
                         onClick={() => handleButtonClick('C', `${modeQuestions[currentProblemIndex]?.options[2]}`)}>
                         <div className={MonopolyLinearPageStyle["answer-text"]} style={{ fontSize: getAnswerFontSize(modeQuestions[currentProblemIndex]?.options[2]) }}>{modeQuestions[currentProblemIndex]?.options[2] || `C`}</div>
                         <AnswerBackground status={isCorrect.C} />
@@ -693,7 +697,7 @@ const MonopolyLinearPage = ({navigateTo, backgroundImage,currentProblemIndex,set
 
                         {
                             stepNum !== 1 && stepNum !== 8 && stepNum !== 11 && (
-                                <span>Question</span>
+                                <span style={{color:`${modeThemeColor}`}}>Question</span>
                             )
                         }
                         

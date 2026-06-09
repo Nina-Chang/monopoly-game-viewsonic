@@ -8,6 +8,7 @@ const modeImages = cfg?.images || {};
 const modeSounds = cfg?.sounds || {};
 const modeQuestions = cfg?.questions?.[0]?.questions || [];
 const modeAssets = cfg?.assets || [];
+const modeThemeColor = cfg?.themeForegroundColor || "";
 
 const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setCurrentProblemIndex,players,setPlayers,bgmAudio}) => {
     const [scaleForDice, setScaleForDice] = useState(1)
@@ -653,14 +654,15 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
 
             {/* 問題區域 */}
             <div className={`${MonopolyRoundPageStyle["question-section"]} ${sectionVisible.question === false ? MonopolyRoundPageStyle.sectionHidden : ''}`}>
-                <span className={MonopolyRoundPageStyle['question-text']}>Question</span>
-                <span className={MonopolyRoundPageStyle['question-content-text']} style={{ fontSize: getQuestionFontSize(modeQuestions[currentProblemIndex]?.question) }}>{modeQuestions[currentProblemIndex]?.question || "Default Question"}</span>
+                <span className={MonopolyRoundPageStyle['question-text']} style={{color:`${modeThemeColor}`}}>Question</span>
+                <span className={MonopolyRoundPageStyle['question-content-text']} style={{ fontSize: getQuestionFontSize(modeQuestions[currentProblemIndex]?.question),color:`${modeThemeColor}` }}>{modeQuestions[currentProblemIndex]?.question || "Default Question"}</span>
                 <img src="./images/object/Basketball_monopoly_question_frame.png" alt="" />
                 
                 <div className={MonopolyRoundPageStyle["answer-section"]}>
                     <button 
                         className={`${MonopolyRoundPageStyle["answer-image-button"]} ${clickingBtn === 'A' ? MonopolyRoundPageStyle.clicking : ''}`}
                         disabled={isProcessing.current} 
+                        style={{color:`${modeThemeColor}`}}
                         onClick={() => { handleButtonClick('A', modeQuestions[currentProblemIndex]?.options[0]) }}>
                         <div className={MonopolyRoundPageStyle["answer-text"]} style={{ fontSize: getAnswerFontSize(modeQuestions[currentProblemIndex]?.options[0]) }}>{modeQuestions[currentProblemIndex]?.options[0] || `A`}</div>
                         <AnswerBackground status={isCorrect.A} />
@@ -669,6 +671,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                     <button 
                         className={`${MonopolyRoundPageStyle["answer-image-button"]} ${clickingBtn === 'B' ? MonopolyRoundPageStyle.clicking : ''}`}
                         disabled={isProcessing.current} 
+                        style={{color:`${modeThemeColor}`}}
                         onClick={() => handleButtonClick('B', `${modeQuestions[currentProblemIndex]?.options[1]}`)}>
                         <div className={MonopolyRoundPageStyle["answer-text"]} style={{ fontSize: getAnswerFontSize(modeQuestions[currentProblemIndex]?.options[1]) }}>{modeQuestions[currentProblemIndex]?.options[1] || `B`}</div>
                         <AnswerBackground status={isCorrect.B} />
@@ -677,6 +680,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
                     <button 
                         className={`${MonopolyRoundPageStyle["answer-image-button"]} ${clickingBtn === 'C' ? MonopolyRoundPageStyle.clicking : ''}`}
                         disabled={isProcessing.current} 
+                        style={{color:`${modeThemeColor}`}}
                         onClick={() => handleButtonClick('C', `${modeQuestions[currentProblemIndex]?.options[2]}`)}>
                         <div className={MonopolyRoundPageStyle["answer-text"]} style={{ fontSize: getAnswerFontSize(modeQuestions[currentProblemIndex]?.options[2]) }}>{modeQuestions[currentProblemIndex]?.options[2] || `C`}</div>
                         <AnswerBackground status={isCorrect.C} />
@@ -699,7 +703,7 @@ const MonopolyRoundPage = ({navigateTo, backgroundImage,currentProblemIndex,setC
 
                         {
                             stepNum !== 1 && stepNum !== 5 && stepNum !== 12 && stepNum !== 19 && (
-                                <span>Question</span>
+                                <span style={{color:`${modeThemeColor}`}}>Question</span>
                             )
                         }
                         

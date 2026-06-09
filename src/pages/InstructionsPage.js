@@ -6,6 +6,7 @@ import useSendGameMessage from '../hooks/useSendGameMessage';
 const cfg = (typeof window !== 'undefined' && window.gameConfig) ? window.gameConfig : {};
 const modeImages = cfg?.images || {};
 const modeAssets = cfg?.assets || [];
+const modeThemeColor = cfg?.themeForegroundColor || "";
 
 const InstructionsPage = ({ navigateTo, backgroundImage }) => {
   const { buttonScale,setScale, handleClickAnimation }=useClickAnimation(()=>navigateTo('monopoly'))
@@ -26,8 +27,8 @@ const InstructionsPage = ({ navigateTo, backgroundImage }) => {
 
   return (
     <div className="page-container" style={pageStyle}>
-      <span className="sticker-text">How to play</span>
-      <div className="instructions-text">
+      <span className="sticker-text" style={{color:`${modeThemeColor}`}}>How to play</span>
+      <div className="instructions-text" style={{color:`${modeThemeColor}`}}>
         <p>1. Roll the dice and move your game piece.</p>
         <p>2. Teams may land on spaces with questions, Fate cards, or Chance cards.</p>
         <p>3. The first team to finish the required number of laps wins!</p>

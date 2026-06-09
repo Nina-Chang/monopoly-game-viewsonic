@@ -11,6 +11,7 @@ const modeStrings = cfg?.strings || {};
 const modePlayers = cfg?.players || [];
 const modeSounds = cfg?.sounds || {};
 const modeAssets = cfg?.assets || [];
+const modeThemeColor = cfg?.themeForegroundColor || "";
 
 const ScoresPage = ({navigateTo, backgroundImage, players, setPlayers,bgmAudio}) => {
     const gameMode=useGameMode()
@@ -69,7 +70,7 @@ const ScoresPage = ({navigateTo, backgroundImage, players, setPlayers,bgmAudio})
 
     return (
         <div className="page-container" style={pageStyle}>
-            <div style={modeStrings.scoresTitle.style} className="congratulation-text">
+            <div style={{color:`${modeThemeColor}`,...modeStrings.scoresTitle.style}} className="congratulation-text">
                 {modeStrings.scoresTitle.text}
             </div>
             {renderWonPlayer()}

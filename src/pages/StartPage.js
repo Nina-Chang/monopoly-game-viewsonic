@@ -6,6 +6,7 @@ import { useEffect } from "react";
 const cfg = (typeof window !== 'undefined' && window.gameConfig) ? window.gameConfig : {};
 const modeStrings = cfg?.strings || {};
 const modeAssets = cfg?.assets || [];
+const modeThemeColor = cfg?.themeForegroundColor || "";
 
 const StartPage = ({ onStartGame, backgroundImage }) => {
   const { buttonScale,setScale, handleClickAnimation }=useClickAnimation(onStartGame)
@@ -26,7 +27,7 @@ const StartPage = ({ onStartGame, backgroundImage }) => {
 
   return (
     <div className="page-container" style={pageStyle}>
-      <div style={modeStrings.startTitle.style} className='start-page-title'>
+      <div style={{color:`${modeThemeColor}`,...modeStrings.startTitle.style}} className='start-page-title'>
         {modeStrings.startTitle.text}
       </div>
       <button className="image-button start-button-center" 
@@ -34,7 +35,7 @@ const StartPage = ({ onStartGame, backgroundImage }) => {
         onMouseLeave={()=>setScale("start",1)}
         onClick={() => handleClickAnimation("start")} style={{transform:`translate(-50%, -50%) scale(${buttonScale.start})`}}>
         <img src={"./images/object/Basketball_monopoly_start_button.png"} alt="start button"/>
-        <span className="start-button-text">Start</span>
+        <span className="start-button-text" style={{color:`${modeThemeColor}`}}>Start</span>
       </button>
       {
         cfg.settings.isSubscribe===false
